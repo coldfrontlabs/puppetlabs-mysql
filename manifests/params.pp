@@ -61,7 +61,7 @@ class mysql::params {
           }
         }
         default: {
-          $provider = 'mysql'
+          $provider = 'mariadb'
         }
       }
 
