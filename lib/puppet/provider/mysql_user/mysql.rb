@@ -3,12 +3,13 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'mysql'))
 Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) do
   desc 'manage users for a mysql database.'
-  commands mysql_raw: 'mysql'
+  commands mysql_raw: 'mariadb'
 
   # Build a property_hash containing all the discovered information about MySQL
   # users.
   def self.instances
-    users = mysql_caller("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').split("\n")
+    users = mysql_caller("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user where HOST IS NOT NULL AND HOST != ''", 'regular').split("\n")
+    # users = users_full.reject { |user| user == 'PUBLIC@' }
     # To reduce the number of calls to MySQL we collect all the properties in
     # one big swoop.
     users.map do |name|
